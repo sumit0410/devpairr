@@ -45,7 +45,7 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      sameSite: true,
+      sameSite: "none",
     });
     res.json({
       msg: `welcome ${user.firstName}! Please complete your profile`,
@@ -80,7 +80,7 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: true,
+        sameSite: "none",
       });
       res.json({
         msg: `Welcome back ${user.firstName}!`,
