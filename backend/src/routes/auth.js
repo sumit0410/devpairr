@@ -42,7 +42,11 @@ authRouter.post("/signup", async (req, res) => {
 
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+    });
     res.json({
       msg: `welcome ${user.firstName}! Please complete your profile`,
       data: savedUser,
@@ -73,7 +77,11 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Incorrect email or password");
     } else {
       const token = await user.getJWT();
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: true,
+      });
       res.json({
         msg: `Welcome back ${user.firstName}!`,
         user: user,
