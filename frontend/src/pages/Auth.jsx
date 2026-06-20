@@ -5,6 +5,7 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 import {
   Dialog,
@@ -22,6 +23,7 @@ import { auth, provider } from "../utils/firebase";
 
 const AuthDialog = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   //sign up....
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +41,7 @@ const AuthDialog = () => {
 
   const handleSignUp = async () => {
     try {
+      setLoading(true);
       setError("");
       const res = await axios.post(
         BASE_URL + "/signup",
@@ -61,14 +64,16 @@ const AuthDialog = () => {
       } else {
         setError("Something went wrong");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   //login....
   const [error, setError] = useState("");
   const [loginData, setLoginData] = React.useState({
-    email: "sumit@gmail.com",
-    password: "Sumit@123",
+    email: "",
+    password: "",
   });
 
   const handleLoginChange = (e) => {
@@ -78,11 +83,12 @@ const AuthDialog = () => {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
+      setError("");
       const res = await axios.post(BASE_URL + "/login", loginData, {
         withCredentials: true,
       });
       dispatch(addUser(res.data.user));
-      // console.log(res.data.user);
       toast.success(res.data.msg, {
         position: "top-center",
       });
@@ -96,12 +102,15 @@ const AuthDialog = () => {
       } else {
         setError("Something went wrong");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   // google login.....
   const handleGoogleAuth = async () => {
     try {
+      setLoading(true);
       provider.setCustomParameters({
         prompt: "select_account",
       });
@@ -141,6 +150,8 @@ const AuthDialog = () => {
         toast.error(error.response.data.msg);
       }
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,12 +220,20 @@ const AuthDialog = () => {
                 onChange={isLogin ? handleLoginChange : handleSignUpChange}
               />
               <p className="text-red-500 text-left my-1">{error}</p>
-
               <Button
-                onClick={isLogin ? handleLogin : handleSignUp}
                 className="w-full text-xs sm:text-sm h-11 rounded-xl mt-2"
+                disabled={loading}
               >
-                {isLogin ? "Login" : "Create Account"}
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {isLogin ? "Logging in..." : "Creating account..."}
+                  </>
+                ) : isLogin ? (
+                  "Login"
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </div>
             <div className="flex items-center my-2">
