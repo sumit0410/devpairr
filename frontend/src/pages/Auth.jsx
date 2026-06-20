@@ -221,6 +221,7 @@ const AuthDialog = () => {
               />
               <p className="text-red-500 text-left my-1">{error}</p>
               <Button
+                onClick={isLogin ? handleLogin : handleSignUp}
                 className="w-full text-xs sm:text-sm h-11 rounded-xl mt-2"
                 disabled={loading}
               >
