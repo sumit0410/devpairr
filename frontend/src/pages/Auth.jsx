@@ -23,6 +23,7 @@ import { auth, provider } from "../utils/firebase";
 
 const AuthDialog = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   //sign up....
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const AuthDialog = () => {
   // google login.....
   const handleGoogleAuth = async () => {
     try {
-      setLoading(true);
+      setGoogleLoading(true);
       provider.setCustomParameters({
         prompt: "select_account",
       });
@@ -151,7 +152,7 @@ const AuthDialog = () => {
       }
       console.log(error);
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -249,8 +250,16 @@ const AuthDialog = () => {
                 variant="outline"
                 className="w-full text-xs sm:text-sm"
                 onClick={handleGoogleAuth}
+                disabled={googleLoading}
               >
-                Continue with Google
+                {googleLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  "Continue with Google"
+                )}
               </Button>
             </div>
 
